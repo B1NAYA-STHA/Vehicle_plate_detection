@@ -3,17 +3,10 @@ from .classes import classNames
 import supervision as sv
 import numpy as np
 from lp_detector import detect_lp
+from draw_label import draw_label
 
-class_id = [2, 3, 5, 7]
+class_id = [2, 3, 5, 7]  # IDs for car, motorbike, bus, truck
 byte_tracker = sv.ByteTrack()
-
-def draw_label(frame, text, x, y, color=(0, 255, 0)):
-    font = cv.FONT_HERSHEY_SIMPLEX
-    scale = 0.6
-    thickness = 2
-    (w, h), _ = cv.getTextSize(text, font, scale, thickness)
-    cv.rectangle(frame, (x, y - h - 10), (x + w + 10, y), color, -1)  # Label background
-    cv.putText(frame, text, (x + 5, y - 5), font, scale, (0, 0, 0), thickness, cv.LINE_AA)  # Black text for contrast
 
 # def draw_boxes(frame, result):
 #     for r in result:
@@ -36,22 +29,29 @@ def draw_label(frame, text, x, y, color=(0, 255, 0)):
 #                 draw_label(frame, label, x1, y1, (255, 0, 255))
 #     return frame   
 
-def draw_boxes(frame, result, model, frame_count, skip_rate = 3):
+
+def draw_boxes(frame, result, model, frame_count, skip_rate=3):
+    # Filter detections for selected vehicle classes
     detections = sv.Detections.from_ultralytics(result[0]) 
     detections = detections[np.isin(detections.class_id, class_id)]
 
+    # Track detected objects
     tracker = byte_tracker.update_with_detections(detections)
+
     for detection in tracker:
         if detection[4] == -1:
             continue
+
         x1, y1, x2, y2 = detection[0].astype(int)
         track_id = detection[4]
         class_name = model.names[detection[3]]
         label = f"{track_id}: {class_name}"
+
+        # Draw bounding box and label on frame
         cv.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 255), 3, cv.LINE_AA)
         draw_label(frame, label, x1, y1, (255, 0, 255))
 
-        if frame_count % skip_rate == 0:
-            frame = detect_lp(frame, (x1, y1, x2, y2))
-           
+        # Run license plate detection inside vehicle bounding box
+        frame = detect_lp(frame, (x1, y1, x2, y2))
+
     return frame
