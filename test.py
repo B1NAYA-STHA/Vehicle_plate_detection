@@ -1,31 +1,25 @@
-from ultralytics import YOLO
 import cv2 as cv
-import supervision as sv
 import numpy as np
+from ultralytics import YOLO
 import easyocr
 
-model = YOLO("Vehicle_plate_detection\model\\best.pt")
-img = cv.imread("Vehicle_plate_detection\photos\\1.jpg")
+model = YOLO("Vehicle_plate_detection/model/best.pt")
+img = cv.imread("Vehicle_plate_detection/photos/5.jpg")
 
-
-result = model(img)
 reader = easyocr.Reader(['en'])
 
-for r in result:
+# Run YOLO prediction
+results = model(img)[0]
+
+for r in results:
     for box in r.boxes:
         x1, y1, x2, y2 = map(int, box.xyxy[0])
         crop = img[y1:y2, x1:x2]
+        text = reader.readtext(crop)
+        print(len(text))
+        print(f"Detected Text: {text[0][1]}")
 
-        ocr_results = reader.readtext(crop)
-        for (_, text, conf) in ocr_results:
-            print(f"Detected text: {text}, Confidence: {conf}")
-
-        # Draw result on image
-        cv.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        if ocr_results:
-            cv.putText(img, ocr_results[0][1], (x1, y1 - 10),
-                       cv.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
-            
-cv.imshow('car', img)
+# Show the final image
+cv.imshow("Plate Detection", img)
 cv.waitKey(0)
-    
+cv.destroyAllWindows()
