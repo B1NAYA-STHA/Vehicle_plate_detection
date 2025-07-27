@@ -30,7 +30,7 @@ byte_tracker = sv.ByteTrack()
 #     return frame   
 
 
-def draw_boxes(frame, result, model, frame_count, skip_rate=3):
+def draw_boxes(frame, result, model, frame_count):
     # Filter detections for selected vehicle classes
     detections = sv.Detections.from_ultralytics(result[0]) 
     detections = detections[np.isin(detections.class_id, class_id)]
@@ -52,6 +52,6 @@ def draw_boxes(frame, result, model, frame_count, skip_rate=3):
         draw_label(frame, label, x1, y1, (255, 0, 255))
 
         # Run license plate detection inside vehicle bounding box
-        frame = detect_lp(frame, (x1, y1, x2, y2))
+        frame = detect_lp(frame, (x1, y1, x2, y2), frame_count, track_id)
 
     return frame
