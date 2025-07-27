@@ -2,10 +2,11 @@ import cv2 as cv
 from ultralytics import YOLO
 from .lp_recognizer import recognize_lp
 from draw_label import draw_label
+from csv_files import update_csv
 
 lp_model = YOLO("Vehicle_plate_detection\model\\best.pt") #license plate detection model
 
-def detect_lp(frame, vehicle_box):
+def detect_lp(frame, vehicle_box, frame_count, track_id):
     x1, y1, x2, y2 = vehicle_box
     #Crop the car from each frame if the video
     vehicle_crops = frame[y1:y2, x1:x2]
@@ -19,10 +20,18 @@ def detect_lp(frame, vehicle_box):
         # Adjust coordinates relative to original frame
         off_x1, off_y1 = lp_x1 + x1, lp_y1 + y1
         off_x2, off_y2 = lp_x2 + x1, lp_y2 + y1
-        
+
         # Recognize license plate text using EasyOCR
-        lp_text = recognize_lp(frame, (off_x1, off_y1, off_x2, off_y2))
-        
+        lp_text, lp_conf = recognize_lp(frame, (off_x1, off_y1, off_x2, off_y2), frame_count, track_id)
+
+        update_csv(
+            frame_number=frame_count,            
+            track_id=track_id,
+            car_bbox=vehicle_box,
+            lp_bbox=(off_x1, off_y1, off_x2, off_y2),
+            lp_text=lp_text,
+            lp_conf=lp_conf
+        )
         # Draw bounding box and recognized text
         cv.rectangle(frame, (off_x1, off_y1), (off_x2, off_y2), (0, 0, 255), 3, cv.LINE_AA)
         draw_label(frame, lp_text, off_x1, off_y1, (0, 0, 255))
