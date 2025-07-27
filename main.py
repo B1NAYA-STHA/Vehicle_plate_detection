@@ -5,7 +5,7 @@ from processor import get_frame_and_result
 
 model = YOLO("yolov8n.pt") #pre--trained YOLO model
 video_url = "Vehicle_plate_detection\\videos\\5.mp4"
-output_video_url = "Vehicle_plate_detection\\output\\2.mp4"
+output_video_url = "Vehicle_plate_detection\\output\\6.mp4"
 frame_count = 0
 
 # Initialize video writer with output path, fps, and frame size
