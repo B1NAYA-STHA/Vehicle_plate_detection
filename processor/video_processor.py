@@ -10,7 +10,7 @@ def get_frame_and_result(model, video_url):
 
         frame = cv.resize(img, (1280, 720)) 
         results = model(frame)  # Run model inference on the frame
-
+        
         yield frame, results  # Yield frame and model results as a generator
 
     cap.release() 
