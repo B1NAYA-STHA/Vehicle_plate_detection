@@ -1,4 +1,3 @@
-<img width="992" height="847" alt="image" src="https://github.com/user-attachments/assets/4612ba7d-8059-4e55-ae25-86c1fb6f1bc0" /><img width="992" height="847" alt="image" src="https://github.com/user-attachments/assets/04d5d8f2-6e34-4f86-8d03-0e134a42a771" />
 # 🚗 Vehicle Detection and License Plate Recognition using YOLOv8
 
 This project focuses on detecting vehicles and recognizing their license plates from images and videos using the **YOLOv8** object detection model. It performs a two-stage detection process: first identifying vehicles, and then detecting license plates within those vehicles. The results are logged and saved for analysis.
@@ -24,5 +23,9 @@ This project focuses on detecting vehicles and recognizing their license plates 
    - CSV file containing detected vehicle IDs, classes, plate numbers, bounding boxes and confidence scores
 
 ---
+
+## 📸 Screenshots
+
+<img width="992" height="847" alt="image" src="https://github.com/user-attachments/assets/04d5d8f2-6e34-4f86-8d03-0e134a42a771" />
 
 
